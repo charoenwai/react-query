@@ -1,16 +1,18 @@
-import React from 'react'
 import './App.css'
 import Pokedex from './Pokedex'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 function App() {
-  
+
+  // Create a client
+  const queryClient = new QueryClient()
 
   return (
     <>
-     <Pokedex></Pokedex>
-     
-     
-    
+      {/* Provide the client to your App */}
+      <QueryClientProvider client={queryClient}>
+        <Pokedex />
+      </QueryClientProvider>
     </>
   )
 }

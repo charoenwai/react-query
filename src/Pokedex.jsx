@@ -1,39 +1,35 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import './Pokedex.css';
+import { useQuery } from '@tanstack/react-query';
 
 function Pokedex() {
-  const [PokeName, setPokeName] = useState('');
-  const [PokemonList, setPokemonList] = useState([]);
-  const [ImageUrl, setImageUrl] = useState('');
-  const [ImageUrl2, setImageUrl2] = useState('');
-  const [PokeName2, setPokeName2] = useState('');
-  const [PokeHp, setPokeHp] = useState([]);
-  const [PokeAtk, setPokeAtk] = useState([]);
-  const [Heightup,setHeightup] = useState(1);
-  const [Heightdown,setHeightdown] = useState(1);
-  console.log(Heightup);
-  console.log(Heightdown);
-  const callApi = async (name) => {
-    const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    const data_format = await res.data;
-    setPokeName(data_format.name);
-    setImageUrl(data_format.sprites.other.showdown.back_default);
-    setPokeHp(data_format.stats[0].base_stat);
-    setPokeAtk(data_format.stats[1].base_stat);
-    setHeightup(data_format.height)
-    console.log(data_format);
-  };
 
-  const boss = async (name) => {
-    const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    const data_format = await res.data;
-    setPokeName2(data_format.name);
-    setImageUrl2(data_format.sprites.other.showdown.front_default);
-    setPokeHp(data_format.stats[0].base_stat);
-    setPokeAtk(data_format.stats[1].base_stat);
-    setHeightdown(data_format.height)
-  };
+  const [selectedPokemon, setSelectedPokemon] = useState('')
+  // Queries
+  const { data: pokemonData } = useQuery({
+    queryKey: ['pokemon', selectedPokemon],
+    queryFn: async () => {
+      const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${selectedPokemon}`);
+      if (res.status != 200) {
+        throw new Error('Network response was not ok')
+      }
+      return res.data
+    },
+  })
+  const [selectedBoss, setSelectedBoss] = useState('')
+  const { data: bossData } = useQuery({
+    queryKey: ['pokemon', selectedBoss],
+    queryFn: async () => {
+      const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${selectedBoss}`);
+      if (res.status != 200) {
+        throw new Error('Network response was not ok')
+      }
+      return res.data
+    },
+  })
+
+  const [PokemonList, setPokemonList] = useState([]);
 
   const fetchPokemonList = async () => {
     const res = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=1309');
@@ -45,17 +41,17 @@ function Pokedex() {
     fetchPokemonList();
   }, []);
 
-  const handleSelectChange = (e) => {
-    const selectedPokemon = e.target.value;
-    callApi(selectedPokemon);
+  const handleSelectChangePokemon = (e) => {
+    const selectedName = e.target.value;
+    setSelectedPokemon(selectedName)
   };
 
-  const handleSelectChange2 = (e) => {
-    const selectedPokemon = e.target.value;
-    boss(selectedPokemon);
+  const handleSelectChangeBoss = (e) => {
+    const selectedName = e.target.value;
+    setSelectedBoss(selectedName)
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChangePokemon = (e) => {
     const searchValue = e.target.value;
     if (searchValue.trim() !== '') {
       callApi(searchValue.trim());
@@ -65,7 +61,7 @@ function Pokedex() {
     }
   };
 
-  const handleInputChange2 = (e) => {
+  const handleInputChangeBoss = (e) => {
     const searchValue = e.target.value;
     if (searchValue.trim() !== '') {
       boss(searchValue.trim());
@@ -79,37 +75,37 @@ function Pokedex() {
   return (
     <>
       <div className='menu'>
-        <input type="text" onChange={handleInputChange} placeholder="Search for a Pokemon..." />
+        <input type="text" onChange={handleInputChangePokemon} placeholder="Search for a Pokemon..." />
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <select onChange={handleSelectChange}>
+        <select onChange={handleSelectChangePokemon}>
           <option value="">Select a Pokemon</option>
           {PokemonList.map((pokemon, index) => (
             <option key={index} value={pokemon}>
-              {pokemon} 
+              {pokemon}
             </option>
           ))}
         </select>
-        {PokeName && <h3 style={{ color: 'white' }}>Name: {PokeName} <br />HP: {PokeHp} <br />ATK: {PokeAtk}</h3>}
+        {pokemonData?.name && <h3 style={{ color: 'white' }}>Name: {pokemonData?.name} <br />HP: {pokemonData?.stats[0]?.base_stat} <br />ATK: {pokemonData?.stats[1]?.base_stat}</h3>}
       </div>
 
-      {ImageUrl && <img id='img1' style={{height:Heightup*12}} src={ImageUrl} alt={PokeName} />}
-      {ImageUrl2 && <img id='img2' style={{height:Heightdown*12}} src={ImageUrl2} alt={PokeName2} />}
+      {pokemonData?.sprites?.other?.showdown?.back_default && <img id='img1' style={{ height: pokemonData?.height * 12 }} src={pokemonData?.sprites?.other?.showdown?.back_default} alt={pokemonData?.name} />}
+      {bossData?.sprites?.other?.showdown?.front_default && <img id='img2' style={{ height: bossData?.height * 12 }} src={bossData?.sprites?.other?.showdown?.front_default} alt={bossData?.name} />}
 
       <div className='menu1'>
-        <input type="text" onChange={handleInputChange2} placeholder="Search for a Pokemon..." />
+        <input type="text" onChange={handleInputChangeBoss} placeholder="Search for a Pokemon..." />
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <select onChange={handleSelectChange2}>
+        <select onChange={handleSelectChangeBoss}>
           <option value="">Select a Pokemon</option>
           {PokemonList.map((pokemon, index) => (
             <option key={index} value={pokemon}>
-              {pokemon} 
+              {pokemon}
             </option>
           ))}
         </select>
-        {PokeName2 && <h3 style={{ color: 'white' }}>Name: {PokeName2} <br />HP: {PokeHp} <br />ATK: {PokeAtk}</h3>}
+        {bossData?.name && <h3 style={{ color: 'white' }}>Name: {bossData?.name} <br />HP: {bossData?.stats[0]?.base_stat} <br />ATK: {bossData?.stats[1]?.base_stat}</h3>}
       </div>
 
-     
+
     </>
   );
 }
