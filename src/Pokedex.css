@@ -1,0 +1,59 @@
+html { 
+    background: url(https://fiverr-res.cloudinary.com/images/t_main1,q_auto,f_auto,q_auto,f_auto/v1/attachments/delivery/asset/0032398f86ea753194c5eeba97eccda2-1627249600/ExportBackgroundnomoveclound/draw-a-pixel-pokemon-battle-background.gif) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    z-index: -1;
+  }
+/* Pokedex.css */
+input[type="text"],
+select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+select {
+  cursor: pointer;
+}
+#img1 {
+    margin-right: 400px;
+    left: 350px;
+    top:350px;
+    margin-top: 300px;
+}
+
+#img2 {
+
+  position: absolute;
+  left:900px;
+  bottom: 40%;
+
+}
+.menu{
+   position: absolute;
+    top: 0;
+    left: 0;
+    margin-top: 50px;
+    margin-left: 50px;
+
+    
+}
+.menu1{
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-top: 50px;
+    margin-left: 1000px; 
+}
+
+.b1{
+    position: absolute;
+    margin-top: 200px;
+    left: 700px;
+
+}
+
